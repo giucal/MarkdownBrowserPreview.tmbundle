@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env bash
+
+set -e  # Exit immediately on error.
+
+if [[ -z $TM_MARKDOWN ]]; then
+    echo &gt;&amp;2 "The TM_MARKDOWN variable is not set."
+    exit 1
+fi
+
+# The temporary directory is specific to the document.
+# If a document is reopened, the directory will change.
+TMPDIR=${TMPDIR:-/tmp}/$TM_APP_IDENTIFIER/$TM_DOCUMENT_UUID
+
+mkdir -p "$TMPDIR"
+
+if [[ -n $TM_FILENAME ]]; then
+    output=$TMPDIR/${TM_FILENAME%.md}.html
+else
+    output=$TMPDIR/preview.html
+fi
+
+# Render Markdown.
+eval "$TM_MARKDOWN &gt; '$output'"
+
+# Show preview in the browser.
+if [[ -n $TM_BROWSER ]]; then
+    open -a "$TM_BROWSER" "file://$output"
+else
+    # Use the default application for HTML files -- usually the browser.
+    open "file://$output"
+fi
+</string>
+	<key>input</key>
+	<string>document</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>keyEquivalent</key>
+	<string>@r</string>
+	<key>name</key>
+	<string>Preview</string>
+	<key>outputCaret</key>
+	<string>interpolateByChar</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>discard</string>
+	<key>scope</key>
+	<string>text.html.markdown</string>
+	<key>uuid</key>
+	<string>61707A03-9153-4745-A95D-96E2DB828267</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
